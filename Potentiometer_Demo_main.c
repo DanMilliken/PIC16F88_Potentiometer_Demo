@@ -40,6 +40,11 @@ void interrupt isr(void);
 
 int main(void)
 {
+    // Set all I/O pins to output
+    TRISA = 0;
+    TRISB = 0;
+
+    // Set the clock
     #assert _XTAL_FREQ == 4000000  // Make sure _XTAL_FREQ is set correctly
     OSCCONbits.IRCF = 0b110;       // Set internal RC oscillator to 4 MHz
     while(!OSCCONbits.IOFS);       // Wait for frequency to stabalize
@@ -63,7 +68,7 @@ int main(void)
 
 void mod_init_ad(void)
 {
-    TRISA = 0b00000001;    // Configure RA0 as input (for potentiometer)
+    TRISA |= 0b00000001;   // Configure RA0 as input (for potentiometer)
     ANSELbits.ANS0 = 1;    // Set RA0 to analog
     ADCON0bits.ADON = 1;   // Turn on the A/D
     ADCON0bits.CHS = 0;    // Use channel AN0 for A/D
@@ -77,11 +82,11 @@ void mod_init_ad(void)
 
 void mod_init_uart(void)
 {
-    TRISB = 0b00100100; // TRISB<5,2> as input. Others as output.
-    TXSTAbits.BRGH = 1; // high baud rate
-    TXSTAbits.SYNC = 0; // asynchronous mode
-    TXSTAbits.TX9  = 0; // 8-bit transmission
-    RCSTAbits.CREN = 1; // continuous receive enable
+    TRISB |= 0b00100100; // TRISB<5,2> as input. Others as output.
+    TXSTAbits.BRGH = 1;  // high baud rate
+    TXSTAbits.SYNC = 0;  // asynchronous mode
+    TXSTAbits.TX9  = 0;  // 8-bit transmission
+    RCSTAbits.CREN = 1;  // continuous receive enable
 
     #assert _XTAL_FREQ == 4000000  // SPBRG is based on 4 MHz clock
     SPBRG = 25;                    // 9600 baud @ 4MHz with BRGH = 1
